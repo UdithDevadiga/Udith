@@ -1,0 +1,27 @@
+Orders(Order_no, purchase_amt, order_date, customer_id, salesman_id) 
+
+Customer(Cust_id, cust_name, city,grade, salesman_id) 
+
+Salesman(salesman_id, name, city) 
+
+1. Display the highest grade for each of the cities of the customers. 
+ans>>> select max(grade),city
+    -> from customer
+    -> group by city;
+
+2. Display names of those customers and salesmen who lives in the same city. 
+ans->>> select customer.cust_name,salesman.name as sales_name,customer.city
+    -> from salesman inner join customer
+    -> using(city);
+
+			OR
+
+    ->>> select customer.cust_name,salesman.name as sales_name,customer.city
+    -> from salesman,customer
+    -> where salesman.city=customer.city;
+
+			OR
+    ->>> select customer.cust_name,salesman.name as sales_name,customer.city
+    -> from customer inner join salesman
+    -> using(city)
+    -> order by city;

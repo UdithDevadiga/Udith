@@ -1,0 +1,80 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+
+<beans xmlns = "http://www.springframework.org/schema/beans"
+   xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:context = "http://www.springframework.org/schema/context"
+   xsi:schemaLocation = "http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context.xsd">
+   
+
+
+
+<bean id="borrower"
+	class="com.library.Borrower">
+	<constructor-arg value="10" type="int"></constructor-arg>
+	<constructor-arg value="Jeevan" type="String"></constructor-arg>
+</bean>
+
+<bean id="borrower1"
+	class="com.library.Borrower">
+	<constructor-arg value="14" type="int"></constructor-arg>
+	<constructor-arg value="Jnanesh" type="String"></constructor-arg>
+</bean>
+
+<bean id="borrower2"
+	class="com.library.Borrower">
+	<constructor-arg value="9" type="int"></constructor-arg>
+	<constructor-arg value="Jignesh" type="String"></constructor-arg>
+</bean>
+
+<bean id="borrower3"
+	class="com.library.Borrower">
+	<constructor-arg value="24" type="int"></constructor-arg>
+	<constructor-arg value="Arshdeep" type="String"></constructor-arg>
+</bean>
+
+<bean id="clerk"
+	class="com.library.Clerk">
+	<constructor-arg value="9" type="int"></constructor-arg>
+	<constructor-arg value="Jignesh" type="String"></constructor-arg>
+</bean>
+
+<bean id="librarian"
+	class="com.library.Librarian">
+	<constructor-arg value="9" type="int"></constructor-arg>
+	<constructor-arg value="Jignesh" type="String"></constructor-arg>
+	<property name="bookList">
+	<list>
+	<value>C++</value>
+	<value>Java</value>
+	<value>Life in Udupi</value>
+	<value>Life in India</value>
+	<value>Python</value>
+	<value>Artificial Intelligence</value>
+	<value>Kotlin</value>
+	</list>
+	</property>
+	
+	
+	
+	<property name="borrowerList">
+	<list>
+	<ref bean="borrower"></ref>
+	<ref bean="borrower2"></ref>
+	<ref bean="borrower3"></ref>
+	</list>
+	</property>
+	
+	<property name="loanHistory">
+	<map>
+	<entry key-ref="borrower" value="Java"></entry>
+	<entry key-ref="borrower1" value="Life in Udupi"></entry>
+	<entry key-ref="borrower2" value="Python"></entry>
+	<entry key-ref="borrower3" value="Kotlin"></entry>
+	</map>
+	</property>
+</bean>
+
+</beans>

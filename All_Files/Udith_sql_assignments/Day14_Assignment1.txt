@@ -1,0 +1,66 @@
+Create following tables by applying appropriate constraints: 
+
+
+
+Orders(Order_no, purchase_amt, order_date, customer_id, salesman_id) 
+
+Customer(Cust_id, cust_name, city,grade, salesman_id) 
+
+Salesman(salesman_id, name, city) 
+ans>>> create table Salesman(
+    -> salesman_id int primary key,
+    -> name varchar(20),
+    -> city varchar(20));
+Query OK, 0 rows affected (0.24 sec)
+
+mysql> create table customer(
+    -> cust_id int primary key,
+    -> cust_name varchar(20),
+    -> city varchar(20),
+    -> grade varchar(10),
+    -> salesman_id int,
+    -> foreign key(salesman_id) references Salesman(salesman_id));
+Query OK, 0 rows affected (0.18 sec)
+
+mysql> create table Orders(
+    -> order_no int primary key,
+    -> purchase_amt float,
+    -> order_date DATE,
+    -> customer_id int,
+    -> salesman_id int,
+    -> foreign key(customer_id) references Customer(cust_id),
+    -> foreign key(salesman_id) references Salesman(salesman_id));
+Query OK, 0 rows affected (0.11 sec)
+
+1. Display those customers who are neither belongs to the city New York nor grade value is more than 100. 
+ans>>> select cust_name from customer
+    -> where not(city="New York" or grade>100);
++-----------+
+| cust_name |
++-----------+
+| Bradman   |
++-----------+
+
+2. Find the highest purchase amount ordered by each customer along with their ID. 
+ans>>> select customer_id,max(purchase_amt) from Orders
+    -> group by customer_id;
++-------------+-------------------+
+| customer_id | max(purchase_amt) |
++-------------+-------------------+
+|           1 |              2000 |
+|           3 |              2430 |
+|           4 |              6500 |
+|           5 |               350 |
++-------------+-------------------+
+4 rows in set (0.01 sec)
+
+3. Find the highest purchase amount along with customer ID and order date, for those customers who have a higher purchase amount in a day which is within the range 2000 and 6000. 
+ans>>> select max(purchase_amt),customer_id,order_date from orders
+    -> where purchase_amt between 2000 and 6000 group by order_date;
++-------------------+-------------+------------+
+| max(purchase_amt) | customer_id | order_date |
++-------------------+-------------+------------+
+|              2000 |           1 | 2019-03-30 |
+|              2430 |           3 | 2022-03-30 |
++-------------------+-------------+------------+
+2 rows in set (0.04 sec)

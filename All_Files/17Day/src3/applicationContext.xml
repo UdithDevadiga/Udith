@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+<bean id = "answer1"
+	class = "com.practiceList.Answers">
+	<property name = "id" value = "1"></property>
+	<property name = "ans" value="Java is a programming language"></property>
+	<property name = "by" value = "Suresh"></property>
+</bean>
+
+<bean id = "answer2"
+	class = "com.practiceList.Answers">
+	<property name="id" value="2"></property>	
+	<property name = "ans" value="Java is a platform"></property>
+	<property name = "by" value = "Ganesh"></property>
+</bean>
+
+<bean id = "answer3"
+	class = "com.practiceList.Answers">
+	<property name="id" value="3"></property>	
+	<property name = "ans" value="Java is a Island in Indonesia"></property>
+	<property name = "by" value = "Ganesh"></property>
+</bean>
+    
+<bean id = "question1"
+	class="com.practiceList.Question">
+	<property name="id" value="1"></property>
+	<property name="quesName" value="What is Java? "></property>
+	<property name="answers">
+	<list><ref bean="answer1"/>
+	<ref bean="answer2"/>
+	</list>
+	</property>
+</bean>
+
+</beans>

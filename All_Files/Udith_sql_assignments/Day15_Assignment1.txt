@@ -1,0 +1,25 @@
+Orders(Order_no, purchase_amt, order_date, customer_id, salesman_id) 
+
+Customer(Cust_id, cust_name, city,grade, salesman_id) 
+
+Salesman(salesman_id, name, city) 
+
+1. Display only those customers whose grade are higher than every customer in New York. 
+
+ans>>>  select cust_name,grade from customer
+    -> where grade>(select max(grade) from customer
+    -> where city="New York");
+
+2. Display all the orders issued by the salesman 'Paul Adam'. 
+
+ans>>> select orders.order_no,orders.order_date,orders.salesman_id
+    -> from orders inner join salesman
+    -> on orders.salesman_id=salesman.salesman_id
+    -> where name="Paul Adam";
+
+3. Write a query to find all orders attributed to a salesman in New york. 
+
+ans>>> select orders.order_no,orders.order_date,orders.salesman_id
+    -> from orders inner join salesman
+    -> on orders.salesman_id=salesman.salesman_id
+    -> where salesman.city="New York";

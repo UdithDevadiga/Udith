@@ -1,0 +1,28 @@
+I. Insurance Database
+Consider the Insurance database given below.
+PERSON (driver – id #: String, name: string, address: string)
+CAR (regno: string, model: string, year: int)
+ACCIDENT (report-number: int, accd-date: date, location: string)
+OWNS (driver-id #: string, regno: string)
+PARTICIPATED (driver-id: string, Regno: string, report-number: int, damage amount: int)
+
+create the table for above database. and write sql queries for the below
+
+
+1.Find the total number of people who owned cars that were involved in accidents in 1989.
+ans>>>  select count(distinct(Participated.driver_id))
+    -> from Accident inner join participated
+    -> using(report_number)
+    -> where year(accd_date)="1989";
+
+2. Find the number of accidents in which the cars belonging to “Rahul” were involved.
+ans>>> select count(Participated.driver_id)
+    -> from Person inner join participated
+    -> using(driver_id)
+    -> where name="Rahul";
+3. Apply the below query for the previous problem
+Update the damage amount for the car with reg number “KA-12-1” in the
+accident with report number “1” to $3000.
+ans>>> update participated
+    -> set damage_amount=3000
+    -> where regno="KA-12-1" and report_number=1;

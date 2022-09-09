@@ -1,0 +1,177 @@
+@@ -1,176 +0,0 @@
+1. Create a table Student with fields USN, Name, Age. 
+Apply following constraint at the column level at time of table creation: 
+Primary Key on USN 
+NOT NULL on Age 
+
+ans>>>create table Student(
+    -> USN varchar(20) primary key ,
+    -> Name varchar(20),
+    -> Age int not null);
+
+2. Create table Student1 selecting USN, Name  from Student. 
+
+ans>>> create table student1 as
+    -> select USN,Name
+    -> from student;
+
+3. Create table Student2 selecting USN, Name from Student, but rename them as st_USN, st_Name in new table. 
+
+ans>>> create table student2 as
+    -> select USN as st_USN,Name as st_Name
+    -> from student;
+
+4. Create table Student_new selecting all the columns from Student. 
+
+ans>>> create table Student_new as
+    -> select * from student;
+
+5. Insert 5 records to Student table 
+ans>>> insert into student values("4MT18IS034","Nishanth",21);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into student values("4MT18IS036","Nisheth",22);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into student values("4MT18IS010","Arhan",23);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into student values("4MT18IS014","Ashwin",22);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into student values("4MT18IS058","Sooryakanth",22);
+Query OK, 1 row affected (0.02 sec)
+
+6. Retrieve contents of all the three tables.
+
+ans>>>  select * from student;
++------------+-------------+-----+
+| USN        | Name        | Age |
++------------+-------------+-----+
+| 4MT18IS010 | Arhan       |  23 |
+| 4MT18IS014 | Ashwin      |  22 |
+| 4MT18IS034 | Nishanth    |  21 |
+| 4MT18IS036 | Nisheth     |  22 |
+| 4MT18IS058 | Sooryakanth |  22 |
++------------+-------------+-----+
+5 rows in set (0.00 sec)
+
+mysql> select * from student1;
+Empty set (0.00 sec)
+
+mysql> select * from student2;
+Empty set (0.00 sec)
+
+7. Create table Student3 selecting USN, Name from Student 
+
+ans>>> create table student3 as
+    -> select USN,Name
+    -> from student;
+Query OK, 5 rows affected (0.07 sec)
+
+8. Create table Student4 selecting USN, Name from Student but rename them as st_USN, st_Name in new table. 
+
+ans>>>  create table Student4 as
+    -> select USN as st_USN,Name as st_Name
+    -> from Student;
+Query OK, 5 rows affected (0.08 sec)
+
+9. Retrieve contents of Student3 and Student4 tables. 
+
+ans>>> select * from student3;
++------------+-------------+
+| USN        | Name        |
++------------+-------------+
+| 4MT18IS010 | Arhan       |
+| 4MT18IS014 | Ashwin      |
+| 4MT18IS034 | Nishanth    |
+| 4MT18IS036 | Nisheth     |
+| 4MT18IS058 | Sooryakanth |
++------------+-------------+
+5 rows in set (0.00 sec)
+select * from student4;
++------------+-------------+
+| st_USN     | st_Name     |
++------------+-------------+
+| 4MT18IS010 | Arhan       |
+| 4MT18IS014 | Ashwin      |
+| 4MT18IS034 | Nishanth    |
+| 4MT18IS036 | Nisheth     |
+| 4MT18IS058 | Sooryakanth |
++------------+-------------+
+5 rows in set (0.00 sec)
+
+10. Insert all the records of Student3 to Student2. 
+
+ans>>> insert into student2
+    -> select * from student3;
+Query OK, 5 rows affected (0.02 sec)
+
+11. Insert USN, Age values to the Student_new table from Student table of those students whose age is 21. 
+
+ans>>> insert into student_new(USN,Age)
+    -> select USN,Age from Student
+    -> where age=21;
+
+12. Insert 3 more records to Student table interactively(Using only one INSERT INTO statement) 
+
+ans>>> insert into Student values("4MT18CS001","Ashwath",26),("4MT18CS002","Abhishek",24),("4MT18CS003","Ashish",21);
+Query OK, 3 row affected (0.03 sec)
+
+13. Retrieve all the contents of Student table 
+
+ans>>>  select * from student;
++------------+-------------+-----+
+| USN        | Name        | Age |
++------------+-------------+-----+
+| 4MT18CS001 | Ashwath     |  26 |
+| 4MT18CS002 | Abhishek    |  24 |
+| 4MT18CS003 | Ashish      |  21 |
+| 4MT18IS010 | Arhan       |  23 |
+| 4MT18IS014 | Ashwin      |  22 |
+| 4MT18IS034 | Nishanth    |  21 |
+| 4MT18IS036 | Nisheth     |  22 |
+| 4MT18IS058 | Sooryakanth |  22 |
++------------+-------------+-----+
+8 rows in set (0.00 sec)
+
+14. Retrieve USN, Name of all Students from Student_new table 
+
+ans>>> select USN,Name from Student_New;
++------------+------+
+| USN        | Name |
++------------+------+
+| 4MT18IS010 | NULL |
+| 4MT18IS014 | NULL |
+| 4MT18IS036 | NULL |
+| 4MT18IS058 | NULL |
++------------+------+
+4 rows in set (0.00 sec)
+
+15. Retrieve USN and Name of all Students from Student table whose age is less than 23. 
+
+ans>>> select usn,name from student
+    -> where age<23;
++------------+-------------+
+| usn        | name        |
++------------+-------------+
+| 4MT18CS003 | Ashish      |
+| 4MT18IS014 | Ashwin      |
+| 4MT18IS034 | Nishanth    |
+| 4MT18IS036 | Nisheth     |
+| 4MT18IS058 | Sooryakanth |
++------------+-------------+
+5 rows in set (0.00 sec)
+
+16. Retrieve all data of students  from Student table whose age is more than 22. 
+
+ans>>>  select * from student
+    -> where age>22;
++------------+----------+-----+
+| USN        | Name     | Age |
++------------+----------+-----+
+| 4MT18CS001 | Ashwath  |  26 |
+| 4MT18CS002 | Abhishek |  24 |
+| 4MT18IS010 | Arhan    |  23 |
++------------+----------+-----+
+3 rows in set (0.00 sec)

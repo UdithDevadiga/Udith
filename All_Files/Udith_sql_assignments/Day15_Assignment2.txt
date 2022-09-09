@@ -1,0 +1,22 @@
+Create following tables by applying appropriate constraints: 
+
+Employee(Employee_ID, First_Name, Last_Name,  Hire_Date, Job_ID, Salary, Manager_ID, Department_ID) 
+
+Job_History(Employee_ID, Start_Date, End_Date, Job_ID, Depertmrnt_ID) 
+
+Department(Dpt_Code, Dpt_Name, Dpt_Allotment) 
+
+ Write the sql query for the above
+
+1. Display the full name (first and last), hire date, salary, and department number for those employees whose first name does not contain the letter M. The result set must be in ascending order by department number. 
+
+ans>>>  select concat(first_name," ",last_name) as full_name,hire_date,salary,department_id
+    -> from employee
+    -> where not(first_name like "M%")
+    -> order by department_id;
+
+2. Display the ID for those employees who did two or more jobs in the past. 
+
+ans>>> select employee_id from job_history
+    -> group by employee_id
+    -> having count(job_id)>1;

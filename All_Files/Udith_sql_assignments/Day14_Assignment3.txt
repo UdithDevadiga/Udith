@@ -1,0 +1,18 @@
+Orders(Order_no, purchase_amt, order_date, customer_id, salesman_id) 
+
+Customer(Cust_id, cust_name, city,grade, salesman_id) 
+
+Salesman(salesman_id, name, city) 
+
+1. Display each order number followed by the name of the customers who made the order. 
+
+ans>>>  select orders.order_no,customer.cust_name
+    -> from orders inner join customer
+    -> on customer.cust_id=orders.customer_id;
+
+2. Display the highest purchase amount on a date '17-Aug-2015' for each salesman along with their ID. 
+
+ans>>> select orders.purchase_amt,orders.order_date,salesman.name as salesman_name,salesman.salesman_id
+    -> from orders inner join salesman
+    -> where orders.salesman_id=salesman.salesman_id and orders.order_date="2015-08-17"
+    -> group by salesman.salesman_id;
