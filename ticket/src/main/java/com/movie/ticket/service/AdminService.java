@@ -61,15 +61,12 @@ public class AdminService {
         return "Access Denied !";
     }
 
-    public List viewTheatresByMovieId(int movie_id,String password) {
-        List<String> theatre=null;
+    public List<Theatre> viewTheatresByMovieId(int movie_id,String password) {
         if(adminAuthentication(password)) {
             String query = "select theatre.id,theatre.name,theatre.location,theatre.cost from shows inner join theatre on shows.theatre_id=theatre.id where movie_id =" + movie_id;
-            List<Theatre> theatreList= jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Theatre.class));
-            return theatreList;
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Theatre.class));
         }
-        theatre.add("Access Denied !");
-        return theatre;
+        return null;
     }
 
     public String updateMovie(Movies movie,String password) {
