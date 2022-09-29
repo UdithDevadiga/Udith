@@ -1,0 +1,14 @@
+<persistence>
+    <persistence-unit name="Student_details">
+
+        <class>com.jpql.demo.Student</class>
+
+        <properties>
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/studentdata"/>
+            <property name="jakarta.persistence.jdbc.user" value="root"/>
+            <property name="jakarta.persistence.jdbc.password" value="Udith@2001"/>
+        </properties>
+
+    </persistence-unit>
+</persistence>
