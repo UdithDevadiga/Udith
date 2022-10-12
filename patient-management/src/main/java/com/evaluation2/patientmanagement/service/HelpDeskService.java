@@ -13,8 +13,8 @@ public interface HelpDeskService {
     public List<Patient> viewPatients();
     public Patient viewPatient(int id);
     public Insurance enterInsuranceDetails(int patientId, Insurance insurance,int stayDuration);
-    public String advancePayment(AdvancePayment payment);
-    public String bookAppointment(int patientId,int doctorId);
+    public Boolean advancePayment(AdvancePayment payment);
+    public DoctorLocation bookAppointment(Appointment appointment);
     public Boolean checkAdvancePayment(int patientId);
     public Admit admitPatient(Admit admit);
 

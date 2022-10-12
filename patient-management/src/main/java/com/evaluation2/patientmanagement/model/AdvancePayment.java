@@ -9,5 +9,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AdvancePayment {
     private int patientId;
-    private int advancePayment;
+    private double advancePayment;
 }

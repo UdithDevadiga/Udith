@@ -7,9 +7,10 @@ import lombok.Setter;
 @Setter
 @Getter
 @AllArgsConstructor
-public class MedicalRecord {
-    private int id;
-    private int patientId;
+public class DoctorLocation {
     private int doctorId;
-    private String report;
+    private String doctorName;
+    private int departmentId;
+    private String departmentName;
+    private String floor;
 }

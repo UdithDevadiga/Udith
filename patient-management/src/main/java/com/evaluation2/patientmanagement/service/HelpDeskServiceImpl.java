@@ -1,12 +1,10 @@
 package com.evaluation2.patientmanagement.service;
 
-import com.evaluation2.patientmanagement.model.Admit;
-import com.evaluation2.patientmanagement.model.AdvancePayment;
-import com.evaluation2.patientmanagement.model.Insurance;
-import com.evaluation2.patientmanagement.model.Patient;
+import com.evaluation2.patientmanagement.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -115,29 +113,33 @@ public class HelpDeskServiceImpl implements HelpDeskService {
     }
 
     @Override
-    public String advancePayment(AdvancePayment payment) {
+    public Boolean advancePayment(AdvancePayment payment) {
         if(checkInPatient(payment.getPatientId())) {
             String query = "insert into advance_payment values(" + payment.getPatientId() + "," + payment.getAdvancePayment() + ")";
             jdbcTemplate.update(query);
-            return "AdvancePayment is Done";
+            return true;
         }
-        return "Invalid Patient Id";
+        return false;
     }
 
     @Override
-    public String bookAppointment(int patientId, int doctorId) {
-        if(checkPatientExist(patientId)) {
-            if (checkDoctorExist(doctorId)) {
-                if (checkIfDoctorBusy(doctorId)) {
-                    return "Sorry The Doctor is Busy Now.";
+    public DoctorLocation bookAppointment(Appointment appointment) {
+        if(checkPatientExist(appointment.getPatientId())) {
+            if (checkDoctorExist(appointment.getDoctorId())) {
+                if (checkIfDoctorBusy(appointment.getDoctorId())) {
+                    return null;
                 }
-                String query = "insert into appointment values(" + patientId + "," + doctorId + ")";
+                String query = "insert into appointment values(" + appointment.getPatientId() + "," + appointment.getDoctorId() + ")";
                 jdbcTemplate.update(query);
-                return "Appointment Done :)";
+                String docQuery = "update Doctor set max_patient = max_patient-1 where id = "+appointment.getDoctorId();
+                jdbcTemplate.update(docQuery);
+                String returnQuery = "select doctor.id,doctor.name,department.id,department.name,department.floor from doctor inner join department on doctor.dept_id == department.id where doctor.id = "+appointment.getDoctorId();
+                List<DoctorLocation> doctorLocations = jdbcTemplate.query(returnQuery,new BeanPropertyRowMapper<>(DoctorLocation.class));
+                return doctorLocations.get(0);
             }
-            return "Invalid Doctor Id";
+            return null;
         }
-        return "Invalid Patient Id";
+        return null;
     }
 
     @Override
@@ -154,7 +156,21 @@ public class HelpDeskServiceImpl implements HelpDeskService {
     @Override
     public Admit admitPatient(Admit admit) {
         if(checkAdvancePayment(admit.getPatientId())){
+            String query = "insert into admit values("+admit.getAdmitId()+","+admit.getPatientId()+","+admit.getWardNumber()+","+admit.getAdmitDate()+")";
+            jdbcTemplate.update(query);
+            String returnQuery = "select * from admit where id = "+admit.getAdmitId();
+            List<Admit> admits = jdbcTemplate.query(returnQuery,new BeanPropertyRowMapper<>(Admit.class));
+            return admits.get(0);
 
         }
+        return null;
+    }
+
+    public  void docFees(int patientId, double docFees) {
+        String query = "delete from out_patient where patient_id = "+patientId;
+        jdbcTemplate.update(query);
+        System.out.println("Fee paid by patient with ID "+patientId+" is "+docFees);
+        String feeQuery = "insert into fee_manager values("+patientId+","+docFees+")";
+        jdbcTemplate.update(feeQuery);
     }
 }

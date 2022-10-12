@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @AllArgsConstructor
-public class MedicalFile {
-    private int id;//pk
-    private int recordId;//pk//fk
+public class FeeManager {
+    private int patient_id;
+    private double feePaid;
 }

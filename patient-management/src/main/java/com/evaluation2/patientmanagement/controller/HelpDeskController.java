@@ -1,7 +1,6 @@
 package com.evaluation2.patientmanagement.controller;
 
-import com.evaluation2.patientmanagement.model.Insurance;
-import com.evaluation2.patientmanagement.model.Patient;
+import com.evaluation2.patientmanagement.model.*;
 import com.evaluation2.patientmanagement.service.HelpDeskServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,5 +54,25 @@ public class HelpDeskController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(insurance1);
+    }
+    @PostMapping("/AdvancePayment")
+    public ResponseEntity<String> advancePayment(AdvancePayment advancePayment) {
+       if(helpDeskService.advancePayment(advancePayment)) {
+           return ResponseEntity.status(HttpStatus.ACCEPTED).body("Advance Payment Received :)");
+       }
+       return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Invalid Patient Id");
+    }
+    @PostMapping("/BookAppointment")
+    public ResponseEntity<DoctorLocation> bookAppointment(@RequestBody Appointment appointment) {
+        DoctorLocation doctorLocation = helpDeskService.bookAppointment(appointment);
+        return ResponseEntity.status(HttpStatus.OK).body(doctorLocation);
+    }
+    @PostMapping("/Admit")
+    public ResponseEntity<Admit> admit(Admit admit) {
+        Admit admit1 = helpDeskService.admitPatient(admit);
+        if(admit1!=null) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(admit1);
+        }
+        return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(null);
     }
 }
