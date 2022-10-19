@@ -1,0 +1,71 @@
+CREATE TABLE `comments` (
+  `tweet_id` bigint NOT NULL,
+  `comment_id` bigint NOT NULL,
+  `user_id` varchar(30) NOT NULL,
+  `date_time` datetime NOT NULL,
+  `content` varchar(1000) NOT NULL,
+  `attachment` longblob,
+  PRIMARY KEY (`comment_id`),
+  KEY `tweet_id` (`tweet_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`tweet_id`) REFERENCES `tweets` (`tweet_id`),
+  CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+CREATE TABLE `followers` (
+  `user_id` varchar(30) NOT NULL,
+  `follower_id` varchar(30) NOT NULL,
+  PRIMARY KEY (`user_id`,`follower_id`),
+  KEY `follower_id` (`follower_id`),
+  CONSTRAINT `followers_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `followers_ibfk_2` FOREIGN KEY (`follower_id`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+CREATE TABLE `likes` (
+  `user_id` varchar(30) NOT NULL,
+  `tweet_id` bigint NOT NULL,
+  PRIMARY KEY (`user_id`,`tweet_id`),
+  KEY `tweet_id` (`tweet_id`),
+  CONSTRAINT `likes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `likes_ibfk_2` FOREIGN KEY (`tweet_id`) REFERENCES `tweets` (`tweet_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+CREATE TABLE `tags` (
+  `tag_name` varchar(30) NOT NULL,
+  `tweet_id` bigint NOT NULL,
+  PRIMARY KEY (`tag_name`,`tweet_id`),
+  KEY `tweet_id` (`tweet_id`),
+  CONSTRAINT `tags_ibfk_1` FOREIGN KEY (`tweet_id`) REFERENCES `tweets` (`tweet_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+CREATE TABLE `tweets` (
+  `tweet_id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(30) NOT NULL,
+  `date_time` datetime NOT NULL,
+  `content` varchar(1000) NOT NULL,
+  `attachment` longblob,
+  PRIMARY KEY (`tweet_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `tweets_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+CREATE TABLE `users` (
+  `user_id` varchar(30) NOT NULL,
+  `user_name` varchar(30) NOT NULL,
+  `email` varchar(30) NOT NULL,
+  `password` varchar(20) NOT NULL,
+  `phone_number` decimal(10,0) NOT NULL,
+  `date_of_birth` date NOT NULL,
+  `profile_photo` longblob,
+  `followers` decimal(30,0) DEFAULT '0',
+  `following` decimal(30,0) DEFAULT '0',
+  `about` varchar(200) DEFAULT NULL,
+  `verified` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `phone_number` (`phone_number`),
+  UNIQUE KEY `phone_number_2` (`phone_number`),
+  UNIQUE KEY `phone_number_3` (`phone_number`),
+  UNIQUE KEY `phone_number_4` (`phone_number`),
+  UNIQUE KEY `phone_number_5` (`phone_number`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_c
