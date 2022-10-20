@@ -51,13 +51,19 @@ CREATE TABLE `tags` (
 CREATE TABLE `tweets` (
   `tweet_id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` varchar(30) NOT NULL,
-  `date_time` datetime NOT NULL,
+  `date_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `hashtags` varchar(100) DEFAULT NULL,
   `content` varchar(1000) NOT NULL,
   `attachment` longblob,
+  `attachment_type` varchar(40) DEFAULT NULL,
+  `attachment_name` varchar(40) DEFAULT NULL,
+  `attachment_url` varchar(40) DEFAULT NULL,
+  `likes` decimal(10,0) DEFAULT '0',
   PRIMARY KEY (`tweet_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `tweets_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
 
 CREATE TABLE `users` (
   `user_id` varchar(30) NOT NULL,

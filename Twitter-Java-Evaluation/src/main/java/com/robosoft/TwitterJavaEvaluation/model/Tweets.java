@@ -1,9 +1,7 @@
 package com.robosoft.TwitterJavaEvaluation.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -12,6 +10,11 @@ public class Tweets {
     private BigInteger tweetId;
     private String userId;
     private Timestamp dateTime;
+    private String hashtags;
     private String content;
-    private byte[] attachment;
+    private MultipartFile attachment;
+    private String attachmentType;
+    private String attachmentName;
+    private String attachmentUrl;
+    private long likes;
 }

@@ -82,8 +82,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Task Denied");
     }
     @PostMapping("/about/{sId}")
-    public ResponseEntity<String> addBio(@PathVariable int sId, @RequestBody String bio) {
-        if(userService.addBio(bio, sId)) {
+    public ResponseEntity<String> addBio(@PathVariable int sId, @RequestBody String about) {
+        if(userService.addBio(about, sId)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Bio added successfully");
         }
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Task Denied !");
@@ -95,11 +95,12 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Task Denied");
     }
-    @PutMapping("/update-about/{sId}")
-    public ResponseEntity<String> updateAbout(@PathVariable int sId, @RequestBody String bio) {
-        if(userService.updateBio(sId,bio)) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Bio updated successfully.");
+    @PostMapping("/follow/{sId}/{userId}")
+    public ResponseEntity<String> follow(@PathVariable int sId,@PathVariable String userId) {
+        if(userService.follow(sId,userId)) {
+            return ResponseEntity.status(HttpStatus.OK).body("You started following "+userId);
         }
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Task Denied");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Task Denied");
     }
+
 }

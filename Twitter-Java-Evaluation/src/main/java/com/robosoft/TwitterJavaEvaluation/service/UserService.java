@@ -17,7 +17,7 @@ public interface UserService {
      UserDetails getUSerDetails(int sId, String userId);
      Boolean addBio(String bio, int sId);
      Boolean deleteBio(int sId);
-     Boolean updateBio(int sId, String bio);
      Boolean follow(int sId, String userId);
+     Boolean addTweetDetails(TweetDetail tweetDetail);
 }
 

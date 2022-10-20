@@ -88,8 +88,8 @@ public class UserServiceImpl implements UserService{
                 return true;
             } catch (Exception e) {
                 System.out.println("Could not save file " + fileName);
+                return false;
             }
-            return false;
         }
         return false;
     }
@@ -163,8 +163,9 @@ public class UserServiceImpl implements UserService{
     public Boolean addBio(String bio,int sId) {
         if(userAuthentication(sId)) {
             try {
-                String query = "insert into users(about) values('" + bio + "')";
+                String query = "update users set about='"+bio+"' where user_id='"+userID+"'";
                 jdbcTemplate.update(query);
+                System.out.println("Im");
                 return true;
             } catch (Exception e) {
                 return false;
@@ -177,21 +178,9 @@ public class UserServiceImpl implements UserService{
     public Boolean deleteBio(int sId) {
         if(userAuthentication(sId)) {
             try {
-                String query = "delete about from users where user_id = '" + userID + "'";
+                String query = "update users set about = '' where user_id='"+userID+"'";
                 jdbcTemplate.update(query);
                 return true;
-            } catch (Exception e) {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public Boolean updateBio(int sId,String bio) {
-        if (userAuthentication(sId)) {
-            try {
-                String query = "update users set about = '"+bio+ "' where user_id = '"+userID+"'";
             } catch (Exception e) {
                 return false;
             }
@@ -203,21 +192,31 @@ public class UserServiceImpl implements UserService{
     public Boolean follow(int sId, String userId) {
         if(userAuthentication(sId)) {
            String checkQuery = "select user_id from users where user_id = '"+userId+"'";
-           List<Integer> userIds = jdbcTemplate.query(checkQuery,new BeanPropertyRowMapper<>(Integer.class));
+           List<String> userIds = jdbcTemplate.queryForList(checkQuery, String.class);
            int size = userIds.size();
            if(size!=0) {
                String query = "insert into followers values('"+userID+"','"+userId+"')";
                jdbcTemplate.update(query);
-               String selQuery = "select followers from users where user_id = '"+userID+"'";
+               String selQuery = "select following from users where user_id = '"+userID+"'";
                int count = jdbcTemplate.queryForObject(selQuery, Integer.class);
                count=count+1;
-               String updateQuery = "update users set followers = "+count+" where user_id = '"+userID+"'";
+               String seleQuery = "select followers from users where user_id = '"+userId+"'";
+               int followCount = jdbcTemplate.queryForObject(seleQuery, Integer.class);
+               followCount=followCount+1;
+               String updateQuery = "update users set following = "+count+" where user_id = '"+userID+"'";
                jdbcTemplate.update(updateQuery);
+               String updateFollowQuery = "update users set followers = "+followCount+" where user_id = '"+userId+"'";
+               jdbcTemplate.update(updateFollowQuery);
                return true;
            }
            return false;
         }
         return false;
+    }
+
+    @Override
+    public Boolean addTweetDetails(TweetDetail tweetDetail) {
+        return null;
     }
 
 }
