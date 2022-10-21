@@ -7,7 +7,7 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 @Data
 public class Tweets {
-    private BigInteger tweetId;
+    private String tweetId;
     private String userId;
     private Timestamp dateTime;
     private String hashtags;

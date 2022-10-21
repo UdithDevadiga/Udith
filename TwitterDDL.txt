@@ -1,16 +1,22 @@
 CREATE TABLE `comments` (
-  `tweet_id` bigint NOT NULL,
-  `comment_id` bigint NOT NULL,
+  `tweet_id` varchar(30) NOT NULL,
+  `comment_id` varchar(30) NOT NULL,
   `user_id` varchar(30) NOT NULL,
-  `date_time` datetime NOT NULL,
+  `date_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `hashtags` varchar(70) DEFAULT NULL,
   `content` varchar(1000) NOT NULL,
   `attachment` longblob,
+  `attachment_type` varchar(40) DEFAULT NULL,
+  `attachment_name` varchar(40) DEFAULT NULL,
+  `attachment_url` varchar(100) DEFAULT NULL,
+  `likes` decimal(10,0) DEFAULT '0',
   PRIMARY KEY (`comment_id`),
-  KEY `tweet_id` (`tweet_id`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`tweet_id`) REFERENCES `tweets` (`tweet_id`),
-  CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+  KEY `tweet_id` (`tweet_id`),
+  CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `comments_ibfk_3` FOREIGN KEY (`tweet_id`) REFERENCES `tweets` (`tweet_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
 
 CREATE TABLE `followers` (
   `user_id` varchar(30) NOT NULL,
@@ -40,13 +46,6 @@ CREATE TABLE `profile_photo` (
   CONSTRAINT `profile_photo_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
-CREATE TABLE `tags` (
-  `tag_name` varchar(30) NOT NULL,
-  `tweet_id` bigint NOT NULL,
-  PRIMARY KEY (`tag_name`,`tweet_id`),
-  KEY `tweet_id` (`tweet_id`),
-  CONSTRAINT `tags_ibfk_1` FOREIGN KEY (`tweet_id`) REFERENCES `tweets` (`tweet_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
 CREATE TABLE `tweets` (
   `tweet_id` bigint NOT NULL AUTO_INCREMENT,
@@ -83,4 +82,20 @@ CREATE TABLE `users` (
   UNIQUE KEY `phone_number_4` (`phone_number`),
   UNIQUE KEY `phone_number_5` (`phone_number`),
   UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+CREATE TABLE `admin` (
+  `admin_id` varchar(20) NOT NULL,
+  `password` varchar(20) NOT NULL,
+  PRIMARY KEY (`admin_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+CREATE TABLE `comment_likes` (
+  `user_id` varchar(30) NOT NULL,
+  `comment_id` varchar(30) NOT NULL,
+  PRIMARY KEY (`user_id`,`comment_id`),
+  KEY `comment_id` (`comment_id`),
+  CONSTRAINT `comment_likes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `comment_likes_ibfk_2` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`comment_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
