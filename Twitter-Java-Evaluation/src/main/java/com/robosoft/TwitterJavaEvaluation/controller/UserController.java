@@ -279,5 +279,11 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.FOUND).body(followers);
     }
-
+    @DeleteMapping("/delete-comment/{sId}")
+    public ResponseEntity<String> deleteComment(@PathVariable int sId, @RequestBody String commentId) {
+        if(userService.deleteComment(sId, commentId)) {
+            return ResponseEntity.status(HttpStatus.OK).body("Comment Deleted");
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Task Failed");
+    }
 }

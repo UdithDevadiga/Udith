@@ -222,7 +222,7 @@ public class UserServiceImpl implements UserService{
             List<String> userIds = jdbcTemplate.queryForList(checkQuery, String.class);
             int size = userIds.size();
             if(size!=0) {
-                String query = "delete from followers where userId = '"+userId+"'";
+                String query = "delete from followers where user_id = '"+userId+"'";
                 jdbcTemplate.update(query);
                 String selQuery = "select following from users where user_id = '"+userID+"'";
                 int count = jdbcTemplate.queryForObject(selQuery, Integer.class);
@@ -385,7 +385,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public List<MyComments> getMyComments(int sId) {
         if(userAuthentication(sId)) {
-            String query = "select comment_id,tweet_id,user_id,date_time,hashtags,content,attachment_type,attachment_name,attachment_url,likes from comments where user_id = '"+userID+"'";
+            String query = "select comment_id,tweet_id,user_id,date_time,reply_comment_id,hashtags,content,attachment_type,attachment_name,attachment_url,likes from comments where user_id = '"+userID+"'";
             return jdbcTemplate.query(query,new BeanPropertyRowMapper<>(MyComments.class));
         }
         return null;
@@ -394,7 +394,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public MyComments getComment(int sId, String commentId) {
         if(userAuthentication(sId)) {
-            String query = "select comment_id,tweet_id,user_id,date_time,hashtags,content,attachment_type,attachment_name,attachment_url,likes from tweets where tweet_id = '"+commentId+"'";
+            String query = "select comment_id,tweet_id,user_id,date_time,reply_comment_id,hashtags,content,attachment_type,attachment_name,attachment_url,likes from tweets where tweet_id = '"+commentId+"'";
             List<MyComments> myComments = jdbcTemplate.query(query,new BeanPropertyRowMapper<>(MyComments.class));
             int size = myComments.size();
             if(size==0) {
@@ -538,5 +538,22 @@ public class UserServiceImpl implements UserService{
         }
         return null;
     }
+
+    @Override
+    public Boolean deleteComment(int sId, String commentId) {
+        if(userAuthentication(sId)) {
+            try {
+                String delQuery = "delete from comment_likes where comment_id = '" + commentId + "' and user_id = '" + userID + "'";
+                jdbcTemplate.update(delQuery);
+                String query = "delete from comments where comment_id = '" + commentId + "'";
+                jdbcTemplate.update(query);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
 
 }

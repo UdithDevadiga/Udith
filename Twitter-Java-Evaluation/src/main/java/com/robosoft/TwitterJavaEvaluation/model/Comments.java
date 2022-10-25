@@ -12,6 +12,7 @@ public class Comments {
     private String commentId;
     private String userId;
     private Timestamp dateTime;
+    private String replyCommentId;
     private String hashtags;
     private String content;
     private MultipartFile attachment;

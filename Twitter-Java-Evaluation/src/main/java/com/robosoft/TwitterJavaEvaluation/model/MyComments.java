@@ -9,6 +9,7 @@ public class MyComments {
     private String tweetId;
     private String userId;
     private Timestamp dateTime;
+    private String replyCommentId;
     private String hashtags;
     private String content;
     private String attachmentType;

@@ -40,5 +40,7 @@ public interface UserService {
      List<UserDetails> Followers(int sId,String userId);
      List<MyTweets> homePage(int sId);
      List<UserDetails> suggestionPage(int sId);
+     Boolean deleteComment(int sId,String commentId);
+
 }
 
