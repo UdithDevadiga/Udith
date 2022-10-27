@@ -149,9 +149,10 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserDetails getUSerDetails(int sId, String userId) {
         if(userAuthentication(sId)) {
-            String query = "select users.user_id,users.user_name,users.date_of_birth,profile_photo.download_url,users.followers,users.following,users.about,users.verified from users inner join profile_photo using(user_id) where users.user_id='"+userId+"'";
+            String query = "select users.user_id,users.user_name,users.date_of_birth,profile_photo.download_url,users.followers,users.following,users.about,users.verified from users left join profile_photo using(user_id) where users.user_id='"+userId+"'";
             List<UserDetails> userDetails = jdbcTemplate.query(query,new BeanPropertyRowMapper<>(UserDetails.class));
             int size = userDetails.size();
+            System.out.println(size);
             if (size == 0) {
                 return null;
             }
@@ -192,25 +193,32 @@ public class UserServiceImpl implements UserService{
     @Override
     public Boolean follow(int sId, String userId) {
         if(userAuthentication(sId)) {
-           String checkQuery = "select user_id from users where user_id = '"+userId+"'";
-           List<String> userIds = jdbcTemplate.queryForList(checkQuery, String.class);
-           int size = userIds.size();
-           if(size!=0) {
-               String query = "insert into followers values('"+userID+"','"+userId+"')";
-               jdbcTemplate.update(query);
-               String selQuery = "select following from users where user_id = '"+userID+"'";
-               int count = jdbcTemplate.queryForObject(selQuery, Integer.class);
-               count=count+1;
-               String seleQuery = "select followers from users where user_id = '"+userId+"'";
-               int followCount = jdbcTemplate.queryForObject(seleQuery, Integer.class);
-               followCount=followCount+1;
-               String updateQuery = "update users set following = "+count+" where user_id = '"+userID+"'";
-               jdbcTemplate.update(updateQuery);
-               String updateFollowQuery = "update users set followers = "+followCount+" where user_id = '"+userId+"'";
-               jdbcTemplate.update(updateFollowQuery);
-               return true;
-           }
-           return false;
+            if(userId.equals(userID)){
+                return false;
+            }
+            try {
+                String checkQuery = "select user_id from users where user_id = '" + userId + "'";
+                List<String> userIds = jdbcTemplate.queryForList(checkQuery, String.class);
+                int size = userIds.size();
+                if (size != 0) {
+                    String query = "insert into followers values('" + userID + "','" + userId + "')";
+                    jdbcTemplate.update(query);
+                    String selQuery = "select following from users where user_id = '" + userID + "'";
+                    int count = jdbcTemplate.queryForObject(selQuery, Integer.class);
+                    count = count + 1;
+                    String seleQuery = "select followers from users where user_id = '" + userId + "'";
+                    int followCount = jdbcTemplate.queryForObject(seleQuery, Integer.class);
+                    followCount = followCount + 1;
+                    String updateQuery = "update users set following = " + count + " where user_id = '" + userID + "'";
+                    jdbcTemplate.update(updateQuery);
+                    String updateFollowQuery = "update users set followers = " + followCount + " where user_id = '" + userId + "'";
+                    jdbcTemplate.update(updateFollowQuery);
+                    return true;
+                }
+                return false;
+            } catch (Exception e) {
+                return false;
+            }
         }
         return false;
     }
@@ -218,7 +226,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public Boolean unfollow(int sId, String userId) {
         if(userAuthentication(sId)) {
-            String checkQuery = "select user_id from users where user_id = '"+userId+"'";
+            String checkQuery = "select follower_id from followers where user_id = '"+userId+"' and follower_id = '"+userId+"'" ;
             List<String> userIds = jdbcTemplate.queryForList(checkQuery, String.class);
             int size = userIds.size();
             if(size!=0) {
@@ -325,15 +333,73 @@ public class UserServiceImpl implements UserService{
     public Boolean postComment(Comments comment,int sId) {
         if(userAuthentication(sId)) {
             if(comment.getAttachment()==null) {
-                String query = "insert into comments(tweet_id,comment_id,user_id,hashtags,content) values(?,?,?,?,?)";
-                jdbcTemplate.update(query, (preparedStatement) -> {
-                    preparedStatement.setString(1, comment.getTweetId());
-                    preparedStatement.setString(2, comment.getCommentId());
-                    preparedStatement.setString(3, userID);
-                    preparedStatement.setString(4, comment.getHashtags());
-                    preparedStatement.setString(5, comment.getContent());
-                });
-                return true;
+                if(comment.getReplyCommentId()==null) {
+                    try {
+                        String query = "insert into comments(tweet_id,comment_id,user_id,hashtags,content) values(?,?,?,?,?)";
+                        jdbcTemplate.update(query, (preparedStatement) -> {
+                            preparedStatement.setString(1, comment.getTweetId());
+                            preparedStatement.setString(2, comment.getCommentId());
+                            preparedStatement.setString(3, userID);
+                            preparedStatement.setString(4, comment.getHashtags());
+                            preparedStatement.setString(5, comment.getContent());
+                        });
+                        return true;
+                    } catch (Exception e) {
+                        return false;
+                    }
+                }
+                try {
+                    String query = "insert into comments(tweet_id,comment_id,user_id,reply_comment_id,hashtags,content) values(?,?,?,?,?,?)";
+                    jdbcTemplate.update(query, (preparedStatement) -> {
+                        preparedStatement.setString(1, comment.getTweetId());
+                        preparedStatement.setString(2, comment.getCommentId());
+                        preparedStatement.setString(3, userID);
+                        preparedStatement.setString(4, comment.getReplyCommentId());
+                        preparedStatement.setString(5, comment.getHashtags());
+                        preparedStatement.setString(6, comment.getContent());
+                    });
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+            if(comment.getReplyCommentId()==null) {
+                String fileName = StringUtils.cleanPath(comment.getAttachment().getOriginalFilename());
+                String downloadURL = "";
+                try {
+                    if (fileName.contains("..")) {
+                        throw new Exception("File Name Contains Invalid Sequence " + fileName);
+                    }
+                    downloadURL = ServletUriComponentsBuilder.fromCurrentContextPath().path("/my-comment-attachment/").path(comment.getCommentId()).toUriString();
+                    try {
+                        String query = "insert into comments(tweet_id,comment_id,user_id,hashtags,content,attachment,attachment_type,attachment_name,attachment_url) values(?,?,?,?,?,?,?,?,?)";
+                        String finalDownloadURL = downloadURL;
+                        jdbcTemplate.update(query, (preparedStatement) -> {
+                            preparedStatement.setString(1, comment.getTweetId());
+                            preparedStatement.setString(2, comment.getCommentId());
+                            preparedStatement.setString(3, userID);
+                            preparedStatement.setString(4, comment.getHashtags());
+                            preparedStatement.setString(5, comment.getContent());
+                            try {
+                                preparedStatement.setBinaryStream(6, new ByteArrayInputStream(comment.getAttachment().getBytes()), comment.getAttachment().getBytes().length);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            preparedStatement.setString(7, comment.getAttachment().getContentType());
+                            preparedStatement.setString(8, fileName);
+                            preparedStatement.setString(9, finalDownloadURL);
+                        });
+                        return true;
+                    } catch (Exception e) {
+                        return false;
+                    }
+
+
+                } catch (Exception e) {
+                    System.out.println("Could not save file " + fileName);
+                    e.printStackTrace();
+                    return false;
+                }
             }
             String fileName = StringUtils.cleanPath(comment.getAttachment().getOriginalFilename());
             String downloadURL = "";
@@ -342,24 +408,29 @@ public class UserServiceImpl implements UserService{
                     throw new Exception("File Name Contains Invalid Sequence " + fileName);
                 }
                 downloadURL = ServletUriComponentsBuilder.fromCurrentContextPath().path("/my-comment-attachment/").path(comment.getCommentId()).toUriString();
-                String query = "insert into comments(tweet_id,comment_id,user_id,hashtags,content,attachment,attachment_type,attachment_name,attachment_url) values(?,?,?,?,?,?,?,?,?)";
-                String finalDownloadURL = downloadURL;
-                jdbcTemplate.update(query, (preparedStatement) -> {
-                    preparedStatement.setString(1, comment.getTweetId());
-                    preparedStatement.setString(2, comment.getCommentId());
-                    preparedStatement.setString(3, userID);
-                    preparedStatement.setString(4, comment.getHashtags());
-                    preparedStatement.setString(5, comment.getContent());
-                    try {
-                        preparedStatement.setBinaryStream(6, new ByteArrayInputStream(comment.getAttachment().getBytes()), comment.getAttachment().getBytes().length);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    preparedStatement.setString(7, comment.getAttachment().getContentType());
-                    preparedStatement.setString(8, fileName);
-                    preparedStatement.setString(9, finalDownloadURL);
-                });
-                return true;
+                try {
+                    String query = "insert into comments(tweet_id,comment_id,user_id,hashtags,content,attachment,attachment_type,attachment_name,attachment_url) values(?,?,?,?,?,?,?,?,?)";
+                    String finalDownloadURL = downloadURL;
+                    jdbcTemplate.update(query, (preparedStatement) -> {
+                        preparedStatement.setString(1, comment.getTweetId());
+                        preparedStatement.setString(2, comment.getCommentId());
+                        preparedStatement.setString(3, userID);
+                        preparedStatement.setString(4, comment.getReplyCommentId());
+                        preparedStatement.setString(5, comment.getHashtags());
+                        preparedStatement.setString(6, comment.getContent());
+                        try {
+                            preparedStatement.setBinaryStream(7, new ByteArrayInputStream(comment.getAttachment().getBytes()), comment.getAttachment().getBytes().length);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        preparedStatement.setString(8, comment.getAttachment().getContentType());
+                        preparedStatement.setString(9, fileName);
+                        preparedStatement.setString(10, finalDownloadURL);
+                    });
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
 
 
             } catch (Exception e) {
@@ -373,13 +444,17 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public CommentDetail getMyCommentAttachment(String commentId) {
-        String query = "select tweet_id,comment_id,attachment,attachment_type,attachment_name,attachment_url from comments where comment_id = '"+commentId+"'";
-        List<CommentDetail> commentDetails = jdbcTemplate.query(query, new BeanPropertyRowMapper<>(CommentDetail.class));
-        int size = commentDetails.size();
-        if (size == 0) {
+        try {
+            String query = "select tweet_id,comment_id,attachment,attachment_type,attachment_name,attachment_url from comments where comment_id = '" + commentId + "'";
+            List<CommentDetail> commentDetails = jdbcTemplate.query(query, new BeanPropertyRowMapper<>(CommentDetail.class));
+            int size = commentDetails.size();
+            if (size == 0) {
+                return null;
+            }
+            return commentDetails.get(0);
+        } catch (Exception e) {
             return null;
         }
-        return commentDetails.get(0);
     }
 
     @Override
@@ -392,9 +467,21 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public List<MyComments> getComments(int sId, String tweetId) {
+        if(userAuthentication(sId))
+        try {
+            String query = "select * from comments where tweet_id = '" + tweetId + "'";
+            return jdbcTemplate.query(query, new BeanPropertyRowMapper<>(MyComments.class));
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    @Override
     public MyComments getComment(int sId, String commentId) {
         if(userAuthentication(sId)) {
-            String query = "select comment_id,tweet_id,user_id,date_time,reply_comment_id,hashtags,content,attachment_type,attachment_name,attachment_url,likes from tweets where tweet_id = '"+commentId+"'";
+            String query = "select comment_id,tweet_id,user_id,date_time,reply_comment_id,hashtags,content,attachment_type,attachment_name,attachment_url,likes from comments where comment_id = '"+commentId+"'";
             List<MyComments> myComments = jdbcTemplate.query(query,new BeanPropertyRowMapper<>(MyComments.class));
             int size = myComments.size();
             if(size==0) {
@@ -533,7 +620,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public List<UserDetails> suggestionPage(int sId) {
         if(userAuthentication(sId)) {
-            String query = "select users.user_id,users.user_name,users.date_of_birth,profile_photo.download_url,users.followers,users.following,users.about,users.verified from users left join profile_photo using(user_id) order by followers asc limit 10";
+            String query = "select users.user_id,users.user_name,users.date_of_birth,profile_photo.download_url,users.followers,users.following,users.about,users.verified from users left join profile_photo using(user_id) order by followers desc limit 10";
             return jdbcTemplate.query(query,new BeanPropertyRowMapper<>(UserDetails.class));
         }
         return null;
@@ -543,9 +630,9 @@ public class UserServiceImpl implements UserService{
     public Boolean deleteComment(int sId, String commentId) {
         if(userAuthentication(sId)) {
             try {
-                String delQuery = "delete from comment_likes where comment_id = '" + commentId + "' and user_id = '" + userID + "'";
-                jdbcTemplate.update(delQuery);
-                String query = "delete from comments where comment_id = '" + commentId + "'";
+//                String delQuery = "delete from comment_likes where comment_id = '" + commentId + "' and user_id = '" + userID + "'";
+//                jdbcTemplate.update(delQuery);
+                String query = "delete from comments where comment_id = '" + commentId + "' and user_id = '"+userID+"'";
                 jdbcTemplate.update(query);
                 return true;
             } catch (Exception e) {
@@ -555,5 +642,31 @@ public class UserServiceImpl implements UserService{
         return false;
     }
 
+    @Override
+    public Boolean deleteTweet(int sId, String tweetId) {
+        if(userAuthentication(sId)) {
+            try {
+                String query = "delete from tweets where tweet_id = '" + tweetId + "' and user_id = '"+userID+"'";
+                jdbcTemplate.update(query);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
+    }
 
+    @Override
+    public Boolean deleteAccount(int sId) {
+        if(userAuthentication(sId)) {
+            try {
+                String query = "delete from users where user_id = '" + userID + "'";
+                jdbcTemplate.update(query);
+                return true;
+            } catch (DataAccessException e) {
+                return false;
+            }
+        }
+        return false;
+    }
 }

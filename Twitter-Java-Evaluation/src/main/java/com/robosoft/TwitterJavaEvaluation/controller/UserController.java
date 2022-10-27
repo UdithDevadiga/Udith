@@ -184,6 +184,15 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Task Failed");
     }
+    //View Comments of particular tweet
+    @GetMapping("/comments/{sId}")
+    public ResponseEntity<List<MyComments>> viewComment(@PathVariable int sId, @RequestBody String tweetId) {
+        List<MyComments> comments =userService.getComments(sId, tweetId);
+        if(comments==null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).body(comments);
+    }
     //View Comment Attachment
     @GetMapping("/my-comment-attachment/{commentId}")
     public ResponseEntity<Resource> myCommentAttachment( @PathVariable String commentId) {
@@ -191,7 +200,11 @@ public class UserController {
         if(commentDetail==null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(commentDetail.getAttachmentType())).header(HttpHeaders.CONTENT_DISPOSITION,"commentDetail; fileName=\""+commentDetail.getAttachmentName()+"\"").body(new ByteArrayResource(commentDetail.getAttachment()));
+        try {
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(commentDetail.getAttachmentType())).header(HttpHeaders.CONTENT_DISPOSITION, "commentDetail; fileName=\"" + commentDetail.getAttachmentName() + "\"").body(new ByteArrayResource(commentDetail.getAttachment()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
     //view comments
     @GetMapping("/get-comments/{sId}")
@@ -283,6 +296,20 @@ public class UserController {
     public ResponseEntity<String> deleteComment(@PathVariable int sId, @RequestBody String commentId) {
         if(userService.deleteComment(sId, commentId)) {
             return ResponseEntity.status(HttpStatus.OK).body("Comment Deleted");
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Task Failed");
+    }
+    @DeleteMapping("/delete-tweet/{sId}")
+    public ResponseEntity<String> deleteTweet(@PathVariable int sId, @RequestBody String tweetId) {
+        if(userService.deleteTweet(sId, tweetId)) {
+            return ResponseEntity.status(HttpStatus.OK).body("Tweet Deleted");
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Task Failed");
+    }
+    @DeleteMapping("/delete-account/{sId}")
+    public ResponseEntity<String> deleteAccount(@PathVariable int sId) {
+        if(userService.deleteAccount(sId)) {
+            return ResponseEntity.status(HttpStatus.OK).body("Account Deleted");
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Task Failed");
     }

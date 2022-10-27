@@ -29,6 +29,7 @@ public interface UserService {
      Boolean postComment(Comments comment,int sId);
      CommentDetail getMyCommentAttachment(String commentId);
      List<MyComments> getMyComments(int sId);
+     List<MyComments> getComments(int sId,String tweetId);
      MyComments getComment(int sId,String commentId);
      Boolean giveLikeToTweet(int sId,String tweetId);
      Boolean removeLikeFromTweet(int sId,String tweetId);
@@ -41,6 +42,7 @@ public interface UserService {
      List<MyTweets> homePage(int sId);
      List<UserDetails> suggestionPage(int sId);
      Boolean deleteComment(int sId,String commentId);
-
+     Boolean deleteTweet(int sId,String tweetId);
+     Boolean deleteAccount(int sId);
 }
 
