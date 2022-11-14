@@ -1,6 +1,9 @@
 package com.robosoft.internmanagement.service;
 
+<<<<<<< HEAD
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
+=======
+>>>>>>> 95d84eb6dcbe051432aae878920020c13c9abc93
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -9,7 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+<<<<<<< HEAD
 import java.io.File;
+=======
+>>>>>>> 95d84eb6dcbe051432aae878920020c13c9abc93
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.channels.MulticastChannel;
@@ -24,6 +30,7 @@ public class StorageService {
 
     private final Path root = Paths.get("src\\main\\resources\\static\\documents\\");
 
+<<<<<<< HEAD
     public String singleFileUpload(MultipartFile file, String email, HttpServletRequest request) {
         String fileUrl = null;
         if (file.isEmpty()) {
@@ -39,10 +46,24 @@ public class StorageService {
             // Get the file and save it somewhere
             byte[] bytes = file.getBytes();
             Path path = Paths.get(CREATED_FOLDER  + file.getOriginalFilename());
+=======
+    public Boolean singleFileUpload(MultipartFile file, String email, HttpServletRequest request) throws Exception {
+
+        if (file.isEmpty()) {
+            return false;
+        }
+
+        try {
+
+            // Get the file and save it somewhere
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(UPLOADED_FOLDER + email + file.getOriginalFilename());
+>>>>>>> 95d84eb6dcbe051432aae878920020c13c9abc93
             Resource resource = new UrlResource(path.toUri());
             String contentType = getContentType(request, resource);
             System.out.println(path);
             Files.write(path, bytes);
+<<<<<<< HEAD
             fileUrl = generateDocumentUrl(email + "/" + file.getOriginalFilename());
             System.out.println(fileUrl);
             
@@ -52,6 +73,17 @@ public class StorageService {
         }
 
         return fileUrl;
+=======
+            generateDocumentUrl(email + file.getOriginalFilename());
+            System.out.println(generateDocumentUrl(email + file.getOriginalFilename()));
+            
+
+        } catch (IOException e) {
+            throw new Exception();
+        }
+
+        return true;
+>>>>>>> 95d84eb6dcbe051432aae878920020c13c9abc93
     }
 
     public String generateDocumentUrl(String fileName){
@@ -59,6 +91,7 @@ public class StorageService {
         return apiUrl + fileName;
     }
 
+<<<<<<< HEAD
     public Resource load(String filename) {
 
         System.out.println("src\\main\\resources\\static\\documents\\".length());
@@ -76,6 +109,8 @@ public class StorageService {
             throw new RuntimeException("Error: " + e.getMessage());
         }
     }
+=======
+>>>>>>> 95d84eb6dcbe051432aae878920020c13c9abc93
 
     public String getContentType(HttpServletRequest request, Resource resource){
         String contentType = null;

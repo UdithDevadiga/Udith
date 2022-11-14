@@ -2,7 +2,10 @@ package com.robosoft.internmanagement.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+<<<<<<< HEAD
 import org.springframework.jdbc.core.JdbcTemplate;
+=======
+>>>>>>> 95d84eb6dcbe051432aae878920020c13c9abc93
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 
 @Service
+<<<<<<< HEAD
 public class EmailService
 {
 
@@ -24,6 +28,16 @@ public class EmailService
 
     public boolean sendEmail(String toEmail)
     {
+=======
+public class EmailService {
+
+    @Autowired
+    private JavaMailSender javaMailSender;
+    @Value("${spring.mail.username}")
+    private String sender;
+
+    public boolean sendMail(String toEmail){
+>>>>>>> 95d84eb6dcbe051432aae878920020c13c9abc93
 
         boolean flag = false;
 
@@ -33,17 +47,27 @@ public class EmailService
         Random random = new Random();
         int otp;
 
+<<<<<<< HEAD
         do
         {
             otp = random.nextInt(9999);
         }
         while(String.valueOf(otp).length() < 3);
+=======
+        do {
+            otp = random.nextInt(9999);
+        } while(String.valueOf(otp).length() < 3);
+>>>>>>> 95d84eb6dcbe051432aae878920020c13c9abc93
 
 
         String message = "Please use OTP " + otp + " for your account password reset request";
 
+<<<<<<< HEAD
         try
         {
+=======
+        try {
+>>>>>>> 95d84eb6dcbe051432aae878920020c13c9abc93
 
             SimpleMailMessage mailMessage = new SimpleMailMessage();
 
@@ -53,6 +77,7 @@ public class EmailService
             mailMessage.setText(message);
 
             javaMailSender.send(mailMessage);
+<<<<<<< HEAD
             String OTP=String.valueOf(otp);
             try
             {
@@ -73,11 +98,22 @@ public class EmailService
 
         finally
         {
+=======
+
+            flag = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        finally{
+>>>>>>> 95d84eb6dcbe051432aae878920020c13c9abc93
             return flag;
         }
 
     }
 
+<<<<<<< HEAD
     public void insert(String emailId,String code)
     {
         jdbcTemplate.update("insert into forgotPassword values (?,?,?,?)",emailId,null,code,(System.currentTimeMillis()/1000)+120);
@@ -95,4 +131,6 @@ public class EmailService
         }
         return "Invalid OTP";
     }
+=======
+>>>>>>> 95d84eb6dcbe051432aae878920020c13c9abc93
 }
