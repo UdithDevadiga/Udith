@@ -9,12 +9,12 @@ import java.sql.Date;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class WorkHistory {
-
-    private String company;
-    private String position;
-    private Date fromDate;
-    private Date toDate;
-    private String location;
+public class AssignBoard
+{
+    private int applicationId;
+    private String recruiterEmail;
+    private String organizerEmail;
+    private Date assignDate;
+    private String status;
 
 }

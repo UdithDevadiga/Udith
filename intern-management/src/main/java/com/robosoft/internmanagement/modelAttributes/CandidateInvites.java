@@ -4,17 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.sql.Date;
-
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class WorkHistory {
+public class CandidateInvites
+{
 
-    private String company;
-    private String position;
-    private Date fromDate;
-    private Date toDate;
+    private String candidateName;
+    private String designation;
+    private long mobileNumber;
     private String location;
+    private String jobDetails;
+    private String candidateEmail;
 
 }
